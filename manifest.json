@@ -1,0 +1,55 @@
+{
+  "id": "ybz-new-readers",
+  "title": [
+    {
+      "lang": "en",
+      "text": "New Readers from Google Sheets"
+    },
+    {
+      "lang": "he",
+      "text": "קוראים חדשים מ־Google Sheets"
+    }
+  ],
+  "subtitle": [
+    {
+      "lang": "en",
+      "text": "Yad Ben-Zvi Library"
+    },
+    {
+      "lang": "he",
+      "text": "ספריית יד בן־צבי"
+    }
+  ],
+  "description": [
+    {
+      "lang": "en",
+      "text": "Creates Alma users from the library's Google Form registration sheet (via a Google Apps Script endpoint), skips readers that already exist, and can archive rows of readers already in Alma. Requires a staff user allowed to create users (e.g. User Manager). An administrator sets the endpoint URL and key in the app's Configuration page."
+    },
+    {
+      "lang": "he",
+      "text": "יצירת קוראים ב־Alma מגיליון ההרשמה של הספרייה ב־Google, דילוג על קוראים קיימים והעברת קוראים שכבר ב־Alma לארכיון."
+    }
+  ],
+  "author": "Yad Ben-Zvi Library",
+  "license": "https://opensource.org/licenses/BSD-3-Clause",
+  "icon": {
+    "type": "url",
+    "value": "/assets/icon.png"
+  },
+  "pages": {
+    "config": "/#/configuration"
+  },
+  "fullscreen": {
+    "allow": true,
+    "open": false
+  },
+  "contentSecurity": {
+    "connectSrc": [
+      "https://script.google.com",
+      "https://script.googleusercontent.com"
+    ]
+  },
+  "relevantForInst": [
+    "972ICC_YBZ"
+  ]
+}

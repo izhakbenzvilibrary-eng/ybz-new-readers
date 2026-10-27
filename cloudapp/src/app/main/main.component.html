@@ -1,0 +1,100 @@
+<div class="ybz" dir="rtl">
+  <header class="brand">
+    <img src="assets/logo.png" alt="יד יצחק בן־צבי" class="logo">
+    <div>
+      <h1>קוראים חדשים</h1>
+      <div class="sub">מגיליון ההרשמה אל Alma</div>
+    </div>
+  </header>
+
+  <!-- not configured -->
+  <section class="card center" *ngIf="view === 'notConfigured'">
+    <div class="badge muted">⚙</div>
+    <h2>האפליקציה עוד לא הוגדרה</h2>
+    <p class="muted-text">מנהל/ת Alma צריך/ה לפתוח את תפריט האפליקציה ← <b>Configuration</b> ולהזין את כתובת הסקריפט ואת המפתח הסודי.</p>
+  </section>
+
+  <!-- loading -->
+  <section class="card center" *ngIf="view === 'loading'">
+    <mat-spinner diameter="40" class="spinner"></mat-spinner>
+    <p class="muted-text">בודק את הגיליון…</p>
+  </section>
+
+  <!-- error -->
+  <section class="card center" *ngIf="view === 'error'">
+    <div class="badge bad">!</div>
+    <h2>משהו השתבש</h2>
+    <p class="muted-text">{{ errorText }}</p>
+    <button class="btn secondary" (click)="refresh()">ניסיון נוסף</button>
+  </section>
+
+  <!-- main -->
+  <ng-container *ngIf="view === 'ready'">
+    <section class="card center">
+      <ng-container *ngIf="!uploading; else uploadingTpl">
+        <div class="badge" [class.ok]="!pending.length" [class.warn]="pending.length">
+          {{ pending.length ? pending.length : '✓' }}
+        </div>
+        <h2>{{ pending.length ? readers(pending.length) + ' ממתינים להעלאה' : 'הכל מעודכן' }}</h2>
+        <p class="muted-text">נבדק ב־{{ checkedAt }}</p>
+
+        <div class="actions" *ngIf="!confirmUpload">
+          <button class="btn green" [disabled]="!pending.length || busy" (click)="confirmUpload = true">העלאה ל־Alma</button>
+          <button class="btn secondary" [disabled]="busy" (click)="refresh()">רענון</button>
+        </div>
+        <div class="confirm" *ngIf="confirmUpload">
+          <p>ליצור ב־Alma {{ readers(pending.length) }}?</p>
+          <div class="actions">
+            <button class="btn green" (click)="upload()">כן, להעלות</button>
+            <button class="btn secondary" (click)="confirmUpload = false">ביטול</button>
+          </div>
+        </div>
+      </ng-container>
+
+      <ng-template #uploadingTpl>
+        <mat-spinner diameter="40" class="spinner"></mat-spinner>
+        <h2>מעלה ל־Alma…</h2>
+        <p class="muted-text">{{ progress }} מתוך {{ pending.length }}</p>
+      </ng-template>
+
+      <ul class="list" *ngIf="pending.length && !uploading && !results.length">
+        <li *ngFor="let r of pending"><span class="dot wait">•</span><span>{{ r.first }} {{ r.last }}</span><span class="id">{{ r.id }}</span></li>
+      </ul>
+    </section>
+
+    <section class="card" *ngIf="results.length && !uploading">
+      <h3>תוצאות ההעלאה האחרונה</h3>
+      <p class="muted-text summary">
+        {{ createdCount }} נוצרו · {{ results.length - createdCount - errorCount }} כבר היו קיימים · {{ errorCount }} שגיאות
+      </p>
+      <ul class="list">
+        <li *ngFor="let r of results" [class.err]="r.status === 'error'">
+          <span class="dot" [class.ok]="r.status !== 'error'" [class.bad]="r.status === 'error'">{{ r.status === 'error' ? '!' : '✓' }}</span>
+          <span>{{ r.name }}</span>
+          <span class="msg">{{ r.status === 'created' ? 'נוצר ב־Alma' : r.message }}</span>
+        </li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h3>ניקוי הגיליון</h3>
+      <p class="muted-text">העברת קוראים שכבר קיימים ב־Alma מהגיליון ללשונית ARCHIVE.</p>
+
+      <button class="btn secondary small" *ngIf="cleanupState === 'idle'" [disabled]="busy" (click)="startCleanup()">בדיקה מול Alma</button>
+      <p class="muted-text" *ngIf="cleanupState === 'checking'">בודק… {{ cleanupProgress }}</p>
+      <p class="muted-text" *ngIf="cleanupState === 'removing'">מעביר לארכיון…</p>
+      <p class="note" *ngIf="cleanupNote && cleanupState === 'idle'">{{ cleanupNote }}</p>
+
+      <ng-container *ngIf="cleanupState === 'confirm'">
+        <p>{{ readers(cleanupList.length) }} כבר קיימים ב־Alma:</p>
+        <ul class="list">
+          <li *ngFor="let r of cleanupList"><span class="dot ok">✓</span><span>{{ r.name }}</span><span class="id">{{ r.id }}</span></li>
+        </ul>
+        <div class="actions start">
+          <button class="btn primary small" (click)="doCleanup()">להעביר לארכיון</button>
+          <button class="btn secondary small" (click)="cancelCleanup()">ביטול</button>
+        </div>
+      </ng-container>
+    </section>
+  </ng-container>
+</div>

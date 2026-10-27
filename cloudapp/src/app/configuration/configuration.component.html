@@ -1,0 +1,25 @@
+<div class="ybz" dir="rtl">
+  <header class="brand">
+    <img src="assets/logo.png" alt="יד יצחק בן־צבי" class="logo">
+    <div>
+      <h1>הגדרות</h1>
+      <div class="sub">חיבור לגיליון ההרשמה</div>
+    </div>
+  </header>
+
+  <section class="card" *ngIf="loaded">
+    <label class="field">
+      <span>כתובת הסקריפט (Web app URL)</span>
+      <input type="url" dir="ltr" [(ngModel)]="scriptUrl" placeholder="https://script.google.com/macros/s/…/exec">
+    </label>
+    <label class="field">
+      <span>מפתח סודי (SECRET)</span>
+      <input type="password" dir="ltr" [(ngModel)]="secret">
+    </label>
+    <p class="muted-text">אותו מפתח שמוגדר בשורת <code>SECRET</code> בסקריפט.</p>
+    <div class="actions start">
+      <button class="btn primary" [disabled]="!valid || saving" (click)="save()">שמירה</button>
+      <a class="btn secondary" routerLink="/">חזרה</a>
+    </div>
+  </section>
+</div>
